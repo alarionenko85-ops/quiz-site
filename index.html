@@ -302,14 +302,47 @@
   .result-what-title { font-size: 12px; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; }
   .result-what-text { font-size: 14px; color: var(--muted); line-height: 1.6; margin: 0; }
 
-  @media (max-width: 480px) {
-    .screen { padding: 60px 18px 36px; }
+  /* STICKY CTA */
+  .sticky-cta {
+    display: none;
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    padding: 12px 16px 20px;
+    background: linear-gradient(to top, #080808 60%, transparent);
+    z-index: 200;
+    text-align: center;
+  }
+  .sticky-cta a {
+    display: block;
+    background: var(--accent);
+    color: #fff;
+    font-family: 'Unbounded', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    padding: 17px 20px;
+    border-radius: 12px;
+    text-decoration: none;
+    transition: opacity 0.2s;
+  }
+  .sticky-cta a:hover { opacity: 0.85; }
+
+  @media (max-width: 600px) {
+    .sticky-cta { display: block; }
+    .screen { padding: 60px 18px 100px; }
     .btn-start, .btn-cta { width: 100%; text-align: center; padding: 16px 20px; }
     .result-highlights { padding: 16px 18px; }
+    /* Hide inline CTA button on mobile — sticky one takes over */
+    .result-inner .btn-cta { display: none; }
+    .result-inner .result-note { display: none; }
   }
 </style>
 </head>
 <body>
+
+<!-- STICKY CTA (mobile only, shown on result screens) -->
+<div class="sticky-cta" id="sticky-cta" style="display:none">
+  <a href="https://radar.protovarku.online">Хочу спробувати →</a>
+</div>
 
 <div class="progress-bar-wrap">
   <div class="progress-bar-fill" id="progress"></div>
@@ -467,6 +500,10 @@ function show(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   window.scrollTo(0, 0);
+  // Show sticky CTA on result screens (mobile only)
+  const isResult = id.startsWith('screen-result-');
+  const isMobile = window.innerWidth <= 600;
+  document.getElementById('sticky-cta').style.display = (isResult && isMobile) ? 'block' : 'none';
 }
 
 function updateProgress(pct) {
